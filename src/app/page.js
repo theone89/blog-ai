@@ -23,7 +23,7 @@ export default function Home({ userId }) {
   const [config, setConfig] = useState({
     openaiApiKey: '',
     unsplashApiKey: '',
-    temperature: 0.7,
+    temperature: 0.5,
     model: 'gpt-4o-mini',
     provider: 'openai',
   });

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
     const [openaiApiKey, setOpenaiApiKey] = useState('');
     const [unsplashApiKey, setUnsplashApiKey] = useState('');
-    const [temperature, setTemperature] = useState(0.7);
+    const [temperature, setTemperature] = useState(0.5);
     const [model, setModel] = useState('gpt-4o-mini');
     const [provider, setProvider] = useState('openai');
     const [isValid, setIsValid] = useState(false);
@@ -34,7 +34,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
             const config = JSON.parse(storedConfig);
             setOpenaiApiKey(config.openaiApiKey || '');
             setUnsplashApiKey(config.unsplashApiKey || '');
-            setTemperature(config.temperature || 0.7);
+            setTemperature(config.temperature || 0.5);
             setModel(config.model || 'gpt-4o-mini');
             setProvider(config.provider || 'openai');
             originalConfigRef.current = config;
@@ -63,14 +63,14 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
     const handleReset = () => {
         setOpenaiApiKey('');
         setUnsplashApiKey('');
-        setTemperature(0.7);
+        setTemperature(0.5);
         setModel('gpt-4o-mini');
         setProvider('openai');
         setIsValid(false);
         const resetConfig = {
             openaiApiKey: '',
             unsplashApiKey: '',
-            temperature: 0.7,
+            temperature: 0.5,
             model: 'gpt-4o-mini',
             provider: 'openai',
         };
@@ -86,7 +86,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
         const resetConfig = {
             openaiApiKey: '',
             unsplashApiKey: '',
-            temperature: 0.7,
+            temperature: 0.5,
             model: 'gpt-4o-mini',
             provider: 'openai',
         };
@@ -94,7 +94,21 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
         localStorage.removeItem('appConfig');
 
     };
-
+    const getTemperatureMessage = (temperature) => {
+        if (temperature >= 0 && temperature < 0.2) {
+            return '🧐 Estricto';
+        } else if (temperature >= 0.2 && temperature < 0.4) {
+            return '😐 Serio';
+        } else if (temperature >= 0.4 && temperature < 0.6) {
+            return '🙂 Neutro';
+        } else if (temperature >= 0.6 && temperature < 0.8) {
+            return '😄 Alegre';
+        } else if (temperature >= 0.8 && temperature <= 1) {
+            return '🤪 Locura';
+        } else {
+            return 'Valor de temperatura no válido';
+        }
+    };
     if (!isOpen) return null;
 
     return (
@@ -123,19 +137,21 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
                     />
                     {unsplashApiKey.trim() === '' && <span className="text-red-500 font-light text-xs animate-pulse">Requerido</span>}
                 </div>
-                disabled={isEdit}
-                <div className="mb-4">
+                <div className="mb-4 ">
                     <label className="block text-sm font-bold mb-2">Temperatura del Modelo:</label>
-                    <input
-                        disabled={isEdit}
-                        type="number"
-                        max="1"
-                        min="0"
-                        step="0.1"
-                        className="w-full p-2 border rounded"
-                        value={temperature}
-                        onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                    />
+                    <div className="flex">0
+                        <input
+                            disabled={isEdit}
+                            type="range"
+                            max="1"
+                            min="0"
+                            step="0.1"
+                            className="w-full p-2 border rounded"
+                            value={temperature}
+                            onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                        />1
+                    </div>
+                    <span className="text-gray-600 ">{getTemperatureMessage(temperature)}</span>
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">Modelo:</label>

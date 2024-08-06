@@ -11,7 +11,7 @@ const PhotoComp = ({ photo, size, style }) => {
                 width={size.width}
                 className={style}
                 src={urls.regular}
-                alt={description}
+                alt={!description ? 'una imagen' : description}
             />
             <a
                 className=""

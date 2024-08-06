@@ -10,6 +10,7 @@ import JsonDisplay from "../components/JsonDisplay";
 import PromptInput from "../components/PromptInput";
 import SettingsModal from "../components/SettingsModal";
 import { encodeApiKey, decodeApiKey } from '../utils/encryptionUtils';
+import ErrorModal from "../components/ErrorModal";
 
 export default function Home({ userId }) {
   const [data, setPhotosResponse] = useState(null);
@@ -26,6 +27,7 @@ export default function Home({ userId }) {
     provider: 'openai',
   });
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(null);
 
   const unsplashApi = createUnsplashApi(userId, config.unsplashApiKey);
 
@@ -61,26 +63,44 @@ export default function Home({ userId }) {
       orientation: "landscape",
       perPage: 4,
     }).then((result) => {
-      setPhotosResponse(result);
-    }).catch(() => {
-      console.log("something went wrong!");
+      if (result.errors) {
+        console.error('Error al obtener imágenes de Unsplash:', result.errors);
+        setError('Error al obtener imágenes de Unsplash. Asegúrate de que tu API Key de Unsplash sea válida y tenga los permisos necesarios.');
+      } else {
+        setPhotosResponse(result);
+      }
+    }).catch((error) => {
+      console.error('Error al obtener imágenes de Unsplash:', error);
+      setError('Error al obtener imágenes de Unsplash. Asegúrate de que tu API Key de Unsplash sea válida y tenga los permisos necesarios.');
     });
   }
 
   const handleSubmit = async (config) => {
     setIsLoading(true);
-    const { object } = await generate(
-      "Crea un blog sobre:" + input,
-      config.openaiApiKey,
-      config.temperature,
-      config.model
-    );
-    for await (const partialObject of readStreamableValue(object)) {
-      if (partialObject) {
-        setGeneration(partialObject);
+    setError(null);
+
+    try {
+      const { object } = await generate(
+        "Crea un blog sobre:" + input,
+        config.openaiApiKey,
+        config.temperature,
+        config.model
+      );
+      for await (const partialObject of readStreamableValue(object)) {
+        if (partialObject) {
+          if (partialObject.error) {
+            setError(partialObject.error);
+          } else {
+            setGeneration(partialObject);
+          }
+        }
       }
+    } catch (error) {
+      console.error('Error al generar contenido:', error);
+      setError('Error al generar contenido. Asegúrate de que tu API Key de OpenAI sea válida y tenga los permisos necesarios.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -121,6 +141,11 @@ export default function Home({ userId }) {
           localStorage.setItem('appConfig', JSON.stringify(encodedConfig));
           setConfig(newConfig);
         }}
+      />
+      <ErrorModal
+        isOpen={error !== null}
+        onClose={() => setError(null)}
+        errorMessage={error}
       />
     </div>
   );

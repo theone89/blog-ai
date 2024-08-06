@@ -17,6 +17,7 @@ export default function Home({ userId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const [check, setCheck] = useState(false);
+  const [isEdit, setIsedit] = useState(false);
   const [copied, setCopied] = useState(false);
   const [generation, setGeneration] = useState(null);
   const [config, setConfig] = useState({
@@ -128,8 +129,11 @@ export default function Home({ userId }) {
         handleChange={handleChange}
         config={config}
         setShowModal={setShowModal}
+        setIsedit={setIsedit}
       />
       <SettingsModal
+        isEdit={isEdit}
+        setIsedit={setIsedit}
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         setConfig={(newConfig) => {

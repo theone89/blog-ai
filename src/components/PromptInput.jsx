@@ -1,10 +1,17 @@
 import React from 'react';
 import Image from 'next/image';
 
-const PromptInput = ({ input, setInput, isLoading, handleSubmit, check, handleChange, config, setShowModal, setGeneration }) => {
+const PromptInput = ({ input, setInput, isLoading, handleSubmit, check, handleChange, config, setShowModal, setGeneration, setIsedit }) => {
 
     const handleToolClick = () => {
+        if (config.openaiApiKey === '' && config.unsplashApiKey === '') {
+            setIsedit(false)
+        } else {
+
+            setIsedit(true)
+        }
         setShowModal(true);
+
     };
 
     const handleSubmitWithConfig = () => {

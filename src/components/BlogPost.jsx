@@ -1,7 +1,7 @@
 import React from 'react';
 import PhotoComp from './PhotoComp';
 
-const BlogPost = ({ blog, data }) => {
+const BlogPost = ({ blog, data, handleSubmit, config }) => {
     return (
         <div className="prose lg:prose-xl mx-auto">
             <div className="text-start p-4">
@@ -31,7 +31,12 @@ const BlogPost = ({ blog, data }) => {
                     <p className="text-xs mt-8">Tags:</p>
                     {blog?.keywords?.map((keyword, index) => (
                         <div key={index} className="inline-block">
-                            <button className="bg-blue-200/30 border-orange-400 shadow-md border-b-2 hover:bg-blue-400 hover:shadow-xl hover:scale-95 shadow-blue-900 hover:animate-pulse text-blue-800 p-1 m-1 rounded">{keyword}</button>
+                            <button
+                                className="bg-blue-200/30 border-orange-400 shadow-md border-b-2 hover:bg-blue-400 hover:shadow-xl hover:scale-95 shadow-blue-900 hover:animate-pulse text-blue-800 p-1 m-1 rounded"
+                                onClick={() => handleSubmit(config, keyword)}
+                            >
+                                {keyword}
+                            </button>
                         </div>
                     ))}
                 </div>

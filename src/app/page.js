@@ -76,13 +76,15 @@ export default function Home({ userId }) {
     });
   }
 
-  const handleSubmit = async (config) => {
+  const handleSubmit = async (config, tag) => {
     setIsLoading(true);
     setError(null);
 
+    const prompt = tag ? `Crea un blog sobre: ${tag}` : "Crea un blog sobre:" + input;
+
     try {
       const { object } = await generate(
-        "Crea un blog sobre:" + input,
+        prompt,
         config.openaiApiKey,
         config.temperature,
         config.model
@@ -113,7 +115,13 @@ export default function Home({ userId }) {
           </div>
         )}
         {generation?.blogs?.map((blog, index) => (
-          <BlogPost key={index} blog={blog} data={data} />
+          <BlogPost
+            key={index}
+            blog={blog}
+            data={data}
+            handleSubmit={handleSubmit}
+            config={config}
+          />
         ))}
       </div>
       {check && (

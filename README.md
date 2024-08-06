@@ -60,6 +60,10 @@ Las API Keys de OpenAI y Unsplash se configuran directamente en la interfaz de u
 
 2. Abre http://localhost:3000 en tu navegador para ver la aplicación.
 
+## Despliegue
+
+La aplicación está desplegada y disponible en [https://blog-ai-sigma.vercel.app/](https://blog-ai-sigma.vercel.app/).
+
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request para discutir cualquier cambio que te gustaría hacer.
@@ -70,7 +74,7 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más 
 
 ## Contacto
 
-Para cualquier consulta o feedback, por favor contacta a través de [correo electrónico](mailto:contacto@blogai.com) o abre un issue en este repositorio.
+Para cualquier consulta o feedback, por favor contacta a través de [correo electrónico](mailto:franklincampos8907@gmail.com) o abre un issue en este repositorio.
 
 ---
 

@@ -51,7 +51,7 @@ const PromptInput = ({ input, setInput, isLoading, handleSubmit, check, handleCh
                             height={50}
                             priority
                         />
-
+                        <p className="text-xs text-center">tools</p>
                     </a>
                     <a href="https://github.com/theone89" className="font-bold text-gray-600 hover:text-gray-900">@franklinCampos</a>
                     <div className="md:flex md:space-x-1">

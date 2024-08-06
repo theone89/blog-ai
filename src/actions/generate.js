@@ -12,7 +12,7 @@ import { createOpenAI } from "@ai-sdk/openai";
  * @param {string} openaiApiKey - The API key for OpenAI.
  * @param {number} temperature - The temperature setting for the OpenAI model.
  * @param {string} model - The model to use for generating the content.
- * @returns {object} - An object containing the generated blog post content as a stream.
+ * @returns {object} - An object containing the generated blog post content as a stream or an error.
  */
 export async function generate(input, openaiApiKey, temperature, model) {
     "use server";
@@ -20,7 +20,7 @@ export async function generate(input, openaiApiKey, temperature, model) {
     const openai = createOpenAI({ apiKey: openaiApiKey });
     const stream = createStreamableValue();
 
-    (async () => {
+    try {
         const { partialObjectStream } = await streamObject({
             model: openai(model),
             system: `Define una estrategia: Antes de comenzar a escribir, es importante tener una estrategia clara. Esto incluye entender a tu público objetivo, los objetivos de tu blog y cómo planeas alcanzarlos1.
@@ -68,7 +68,11 @@ Mide el rendimiento de tu blog: Utiliza herramientas de análisis para entender 
         }
 
         stream.done();
-    })();
+    } catch (error) {
+        console.error('Error al generar contenido:', error);
+        stream.update({ error: error.message });
+        stream.done();
+    }
 
     return { object: stream.value };
 }

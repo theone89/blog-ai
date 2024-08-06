@@ -14,7 +14,7 @@ export function createUnsplashApi(userId, unsplashApiKey) {
         return cachedUnsplashApis[userId].api;
     }
 
-    console.log(`Creating Unsplash API instance for user ${userId}`);
+
     const api = createApi({
         accessKey: unsplashApiKey,
     });

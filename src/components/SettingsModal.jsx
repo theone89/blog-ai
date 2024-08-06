@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const SettingsModal = ({ isOpen, onClose, setConfig }) => {
+const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
     const [openaiApiKey, setOpenaiApiKey] = useState('');
     const [unsplashApiKey, setUnsplashApiKey] = useState('');
     const [temperature, setTemperature] = useState(0.7);
     const [model, setModel] = useState('gpt-4o-mini');
     const [provider, setProvider] = useState('openai');
     const [isValid, setIsValid] = useState(false);
+
+    const originalConfigRef = useRef(null);
 
     const openaiModels = [
         'gpt-4o-mini', // Asegúrate de que este modelo esté disponible y compatible
@@ -35,30 +37,30 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
             setTemperature(config.temperature || 0.7);
             setModel(config.model || 'gpt-4o-mini');
             setProvider(config.provider || 'openai');
+            originalConfigRef.current = config;
         }
     }, [isOpen]);
 
     useEffect(() => {
-        // Validar si ambas claves API están presentes
+
         setIsValid(openaiApiKey.trim() !== '' && unsplashApiKey.trim() !== '');
     }, [openaiApiKey, unsplashApiKey]);
 
     const handleSave = () => {
         if (isValid) {
-            const config = {
-                openaiApiKey,
-                unsplashApiKey,
-                temperature,
-                model,
-                provider,
+            const updatedConfig = {
+                openaiApiKey: openaiApiKey !== originalConfigRef.current?.openaiApiKey ? openaiApiKey : originalConfigRef.current?.openaiApiKey,
+                unsplashApiKey: unsplashApiKey !== originalConfigRef.current?.unsplashApiKey ? unsplashApiKey : originalConfigRef.current?.unsplashApiKey,
+                temperature: temperature !== originalConfigRef.current?.temperature ? temperature : originalConfigRef.current?.temperature,
+                model: model !== originalConfigRef.current?.model ? model : originalConfigRef.current?.model,
+                provider: provider !== originalConfigRef.current?.provider ? provider : originalConfigRef.current?.provider,
             };
-            setConfig(config);
+            setConfig(updatedConfig);
             onClose();
         }
     };
 
     const handleReset = () => {
-        // Restablecer valores a los predeterminados
         setOpenaiApiKey('');
         setUnsplashApiKey('');
         setTemperature(0.7);
@@ -74,6 +76,23 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
         };
         setConfig(resetConfig);
         localStorage.removeItem('appConfig');
+
+    };
+    const handleEdit = () => {
+        setIsedit(false)
+        setOpenaiApiKey('');
+        setUnsplashApiKey('');
+        setIsValid(false);
+        const resetConfig = {
+            openaiApiKey: '',
+            unsplashApiKey: '',
+            temperature: 0.7,
+            model: 'gpt-4o-mini',
+            provider: 'openai',
+        };
+        setConfig(resetConfig);
+        localStorage.removeItem('appConfig');
+
     };
 
     if (!isOpen) return null;
@@ -85,6 +104,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">OpenAI API Key:</label>
                     <input
+                        disabled={isEdit}
                         type="password"
                         className="w-full p-2 border rounded"
                         value={openaiApiKey}
@@ -95,6 +115,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">Unsplash API Key:</label>
                     <input
+                        disabled={isEdit}
                         type="password"
                         className="w-full p-2 border rounded"
                         value={unsplashApiKey}
@@ -102,9 +123,11 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                     />
                     {unsplashApiKey.trim() === '' && <span className="text-red-500 font-light text-xs animate-pulse">Requerido</span>}
                 </div>
+                disabled={isEdit}
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">Temperatura del Modelo:</label>
                     <input
+                        disabled={isEdit}
                         type="number"
                         max="1"
                         min="0"
@@ -117,6 +140,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">Modelo:</label>
                     <select
+                        disabled={isEdit}
                         className="w-full p-2 border rounded"
                         value={model}
                         onChange={(e) => setModel(e.target.value)}
@@ -129,6 +153,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">Proveedor:</label>
                     <select
+                        disabled={isEdit}
                         className="w-full p-2 border rounded"
                         value={provider}
                         onChange={(e) => setProvider(e.target.value)}
@@ -142,7 +167,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                         <div>
                             <button
                                 onClick={handleReset}
-                                className="mr-2 px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+                                className="mr-2  px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
                             >
                                 Reset
                             </button>
@@ -155,14 +180,23 @@ const SettingsModal = ({ isOpen, onClose, setConfig }) => {
                             Cerrar
                         </button>
                     )}
+                    {isEdit ? (
+                        <button
+                            onClick={handleEdit}
+                            className={`px-4 py-2 text-white rounded ${!isValid ? 'bg-gray-500' : 'bg-green-500 hover:bg-green-600'}`}
+                            disabled={!isValid}
+                        >
+                            Editar
+                        </button>) : (
+                        <button
+                            onClick={handleSave}
+                            className={`px-4 py-2 text-white rounded ${!isValid ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'}`}
+                            disabled={!isValid}
+                        >
+                            Guardar
+                        </button>)}
 
-                    <button
-                        onClick={handleSave}
-                        className={`px-4 py-2 text-white rounded ${!isValid ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'}`}
-                        disabled={!isValid}
-                    >
-                        Guardar
-                    </button>
+
                 </div>
             </div>
         </div>

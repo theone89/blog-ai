@@ -76,6 +76,7 @@ const SettingsModal = ({ isOpen, onClose, setConfig, isEdit, setIsedit }) => {
         };
         setConfig(resetConfig);
         localStorage.removeItem('appConfig');
+        setIsedit(false)
 
     };
     const handleEdit = () => {

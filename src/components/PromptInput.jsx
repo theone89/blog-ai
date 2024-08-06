@@ -41,15 +41,17 @@ const PromptInput = ({ input, setInput, isLoading, handleSubmit, check, handleCh
                     </button>
                 </div>
                 <div className="flex justify-between items-center">
-                    <a href="#" className="font-bold text-gray-600 hover:text-gray-900" onClick={handleToolClick}>
+                    <a href="#" className="font-bold  text-gray-600 hover:text-gray-900" onClick={handleToolClick}>
+
                         <Image
                             src="/enoceantool.svg"
                             alt="enoceantool icon"
-                            className="bg-primary hover:rotate-45 text-primary-foreground rounded-full flex items-center justify-center"
+                            className="bg-primary  animate-pulse hover:rotate-45 text-primary-foreground rounded-full flex items-center justify-center"
                             width={50}
                             height={50}
                             priority
                         />
+
                     </a>
                     <a href="https://github.com/theone89" className="font-bold text-gray-600 hover:text-gray-900">@franklinCampos</a>
                     <div className="md:flex md:space-x-1">
